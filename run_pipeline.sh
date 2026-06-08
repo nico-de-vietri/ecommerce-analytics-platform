@@ -1,19 +1,37 @@
+
 #!/bin/bash
+
+set -e
 
 DB="ecommerce"
 USER="postgres"
+HOST="localhost"
 PORT="5433"
 
-echo "Starting SQL pipeline..."
+echo "================================="
+echo " Ecommerce ELT Pipeline"
+echo "================================="
 
-echo "Creating schemas..."
-psql -h localhost -p $PORT -U $USER -d $DB -f sql/01_setup/create_schemas.sql
+echo ""
+echo "[1/3] Creating schemas..."
+psql -h $HOST -p $PORT -U $USER -d $DB \
+    -f sql/01_setup/create_schemas.sql
 
-echo " Creating staging tables..."
-psql -h localhost -p $PORT -U $USER -d $DB -f sql/02_staging/staging_orders.sql
-psql -h localhost -p $PORT -U $USER -d $DB -f sql/02_staging/staging_customers.sql
-psql -h localhost -p $PORT -U $USER -d $DB -f sql/02_staging/staging_order_items.sql
-psql -h localhost -p $PORT -U $USER -d $DB -f sql/02_staging/staging_payments.sql
-psql -h localhost -p $PORT -U $USER -d $DB -f sql/02_staging/staging_products.sql
+echo ""
+echo "[2/3] Creating staging tables..."
+for file in sql/02_staging/*.sql
+do
+    echo "Running $file"
+    psql -h $HOST -p $PORT -U $USER -d $DB -f "$file"
+done
 
-echo "Pipeline finished!"
+echo ""
+echo "[3/3] Loading data..."
+for file in sql/03_load/*.sql
+do
+    echo "Running $file"
+    psql -h $HOST -p $PORT -U $USER -d $DB -f "$file"
+done
+
+echo ""
+echo "Pipeline completed successfully."
