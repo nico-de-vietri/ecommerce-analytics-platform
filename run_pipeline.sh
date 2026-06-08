@@ -34,4 +34,13 @@ do
 done
 
 echo ""
+echo "[3/3] Checkinging data..."
+for file in sql/04_quality_check/*.sql
+do
+    echo "Running $file"
+    psql -h $HOST -p $PORT -U $USER -d $DB -f "$file"
+done
+
+
+echo ""
 echo "Pipeline completed successfully."
