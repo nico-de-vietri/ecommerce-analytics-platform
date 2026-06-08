@@ -14,8 +14,12 @@ echo "================================="
 
 echo ""
 echo "[1/3] Creating schemas..."
-psql -h $HOST -p $PORT -U $USER -d $DB \
-    -f sql/01_setup/create_schemas.sql
+for file in sql/01_setup/*.sql
+do
+    echo "Running $file"
+    psql -h $HOST -p $PORT -U $USER -d $DB -f "$file"
+done
+
 
 echo ""
 echo "[2/3] Creating staging tables..."

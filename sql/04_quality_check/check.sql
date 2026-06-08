@@ -50,8 +50,10 @@ business_sanity_check AS (
          MAX(order_purchase_timestamp)::text) AS metric,
         'INFO' AS status
     FROM staging.orders
-)
+),
 
+
+quality_report as (
 SELECT * FROM row_integrity_checks
 UNION ALL
 SELECT * FROM uniqueness_checks
@@ -60,4 +62,9 @@ SELECT * FROM relationship_validation
 UNION ALL
 SELECT * FROM null_completeness_check
 UNION ALL
-SELECT * FROM business_sanity_check;
+SELECT * FROM business_sanity_check)
+
+INSERT INTO analytics.data_quality_log (check_name, metric, status)
+SELECT check_name, metric, status FROM quality_report;
+
+select * from analytics.data_quality_log ORDER BY id DESC;
