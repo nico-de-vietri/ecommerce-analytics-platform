@@ -64,7 +64,20 @@ SELECT * FROM null_completeness_check
 UNION ALL
 SELECT * FROM business_sanity_check)
 
-INSERT INTO analytics.data_quality_log (check_name, metric, status)
-SELECT check_name, metric, status FROM quality_report;
+INSERT INTO analytics.data_quality_log (pipeline_run_id, check_name, metric, status)
+--SELECT check_name, metric, status FROM quality_report;
+SELECT
+    :'run_id',
+    check_name,
+    metric,
+    status
+FROM quality_report;
 
-select * from analytics.data_quality_log ORDER BY id DESC;
+SELECT
+    pipeline_run_id,
+    check_name,
+    metric,
+    status
+FROM analytics.data_quality_log
+WHERE pipeline_run_id = :'run_id'
+ORDER BY id;

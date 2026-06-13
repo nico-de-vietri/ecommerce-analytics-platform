@@ -1,7 +1,8 @@
-
 #!/bin/bash
 
 set -e
+
+RUN_ID=$(date +%Y%m%d_%H%M%S)
 
 DB="ecommerce"
 USER="postgres"
@@ -11,40 +12,64 @@ PORT="5433"
 echo "================================="
 echo " Ecommerce ELT Pipeline"
 echo "================================="
+echo "Pipeline Run ID: $RUN_ID"
 
 echo ""
-echo "[1/3] Creating schemas..."
+echo "[1/4] Creating schemas..."
 for file in sql/01_setup/*.sql
 do
     echo "Running $file"
-    psql -h $HOST -p $PORT -U $USER -d $DB -f "$file"
+    psql -v ON_ERROR_STOP=1 \
+         -h $HOST -p $PORT \
+         -U $USER -d $DB \
+         -f "$file"
 done
 
-
 echo ""
-echo "[2/3] Creating staging tables..."
+echo "[2/4] Creating staging tables..."
 for file in sql/02_staging/*.sql
 do
     echo "Running $file"
-    psql -h $HOST -p $PORT -U $USER -d $DB -f "$file"
+    psql -v ON_ERROR_STOP=1 \
+         -h $HOST -p $PORT \
+         -U $USER -d $DB \
+         -f "$file"
 done
 
 echo ""
-echo "[3/3] Loading data..."
+echo "[3/4] Loading data..."
 for file in sql/03_load/*.sql
 do
     echo "Running $file"
-    psql -h $HOST -p $PORT -U $USER -d $DB -f "$file"
+    psql -v ON_ERROR_STOP=1 \
+         -h $HOST -p $PORT \
+         -U $USER -d $DB \
+         -f "$file"
 done
 
 echo ""
-echo "[3/3] Checkinging data..."
+echo "[4/4] Running data quality checks..."
 for file in sql/04_quality_check/*.sql
 do
     echo "Running $file"
-    psql -h $HOST -p $PORT -U $USER -d $DB -f "$file"
+    psql -v ON_ERROR_STOP=1 \
+         -v run_id="$RUN_ID" \
+         -h $HOST -p $PORT \
+         -U $USER -d $DB \
+         -f "$file"
 done
 
+echo ""
+echo "[5/5] Running data marts..."
+for file in sql/05_marts/*.sql
+do
+    echo "Running $file"
+    psql -v ON_ERROR_STOP=1 \
+         -v run_id="$RUN_ID" \
+         -h $HOST -p $PORT \
+         -U $USER -d $DB \
+         -f "$file"
+done
 
 echo ""
 echo "Pipeline completed successfully."

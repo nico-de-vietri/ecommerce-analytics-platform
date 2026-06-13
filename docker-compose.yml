@@ -23,6 +23,14 @@ services:
     depends_on:
       - postgres
 
+  streamlit:
+    build:
+      context: ./dashboard
+    container_name: ecommerce-dashboard
+    ports:
+      - "8501:8501"
+    depends_on:
+      - postgres
 
 
 volumes:
