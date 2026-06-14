@@ -45,3 +45,11 @@ def render_top_categories(engine):
     st.subheader("Top 10 Product Categories by Revenue")
 
     st.bar_chart(df.set_index("product_category_name")["revenue"])
+
+
+def render_status(engine):
+
+    df = pd.read_sql(open("sql/order_status.sql").read(), engine)
+
+    st.subheader("Order Status Distribution")
+    st.bar_chart(df.set_index("order_status"))
