@@ -7,5 +7,8 @@ SELECT
 FROM analytics.fact_orders fo
 JOIN staging.customers c
     ON fo.customer_id = c.customer_id
+{where_clause}
 GROUP BY 1
 ORDER BY 1;
+
+

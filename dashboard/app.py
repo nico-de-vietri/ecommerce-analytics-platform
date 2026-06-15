@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 from db import get_engine
 from components.kpi_cards import render_kpis
 from components.charts import (
@@ -9,13 +10,27 @@ from components.charts import (
 )
 from components.tables import render_top_customers
 from components.insights import render_insights
+from filters import build_filters
 
 st.set_page_config("Executive Dashboard", layout="wide")
 
 engine = get_engine()
 
-# st.sidebar.header("Filters")
+st.sidebar.header("Filters")
 
+states = pd.read_sql(open("sql/filters/states.sql").read(), engine)
+
+categories = pd.read_sql(open("sql/filters/categories.sql").read(), engine)
+
+selected_states = st.sidebar.multiselect("State", states["customer_state"].tolist())
+
+selected_categories = st.sidebar.multiselect(
+    "Category", categories["product_category_name"].tolist()
+)
+# building filter
+where_sql, params = build_filters(
+    states=selected_states, categories=selected_categories
+)
 
 st.title("Ecommerce Executive Dashboard")
 
@@ -23,7 +38,7 @@ render_kpis(engine)
 
 st.divider()
 
-render_trends(engine)
+render_trends(engine, where_sql, params)
 
 st.divider()
 

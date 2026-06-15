@@ -1,0 +1,3 @@
+SELECT DISTINCT product_category_name
+FROM analytics.mart_product_category
+ORDER BY product_category_name;

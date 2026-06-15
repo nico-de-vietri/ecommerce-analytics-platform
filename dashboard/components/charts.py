@@ -3,9 +3,10 @@ import pandas as pd
 import altair as alt
 
 
-def render_trends(engine):
+def render_trends(engine, where_sql, params):
     query = open("sql/revenue_trend.sql").read()
-    df = pd.read_sql(query, engine)
+    query = query.format(where_clause=where_sql)
+    df = pd.read_sql(query, engine, params=params)
 
     df["month"] = pd.to_datetime(df["month"])
     df = df.sort_values("month")
