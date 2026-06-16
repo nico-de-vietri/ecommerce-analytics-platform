@@ -48,9 +48,11 @@ def render_top_categories(engine):
     st.bar_chart(df.set_index("product_category_name")["revenue"])
 
 
-def render_status(engine):
+def render_status(engine, where_sql, params):
 
-    df = pd.read_sql(open("sql/order_status.sql").read(), engine)
+    query = open("sql/order_status.sql").read()
+    query = query.format(where_clause=where_sql)
+    df = pd.read_sql(query, engine, params=params)
 
     st.subheader("Order Status Distribution")
     st.bar_chart(df.set_index("order_status"))

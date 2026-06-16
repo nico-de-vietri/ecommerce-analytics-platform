@@ -64,7 +64,7 @@ st.divider()
 col1, col2 = st.columns(2)
 
 with col1:
-    render_status(engine)
+    render_status(engine, where_sql, params)
 
 with col2:
     render_top_customers(engine)
