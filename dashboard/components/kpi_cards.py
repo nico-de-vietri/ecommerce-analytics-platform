@@ -2,11 +2,13 @@ import streamlit as st
 import pandas as pd
 
 
-def render_kpis(engine):
+def render_kpis(engine, where_sql, params):
     with open("sql/kpis.sql") as f:
         query = f.read()
 
-    df = pd.read_sql(query, engine)
+    query = query.format(where_clause=where_sql)
+
+    df = pd.read_sql(query, engine, params=params)
 
     orders = df["orders"][0]
     customers = df["customers"][0]

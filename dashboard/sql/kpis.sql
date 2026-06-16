@@ -5,4 +5,6 @@ SELECT
     ROUND(AVG(fo.payment_value), 2) AS aov
 FROM analytics.fact_orders fo
 JOIN staging.customers c
-ON fo.customer_id = c.customer_id;
+ON fo.customer_id = c.customer_id
+{where_clause}
+;

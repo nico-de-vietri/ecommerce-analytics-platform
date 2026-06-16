@@ -34,7 +34,7 @@ where_sql, params = build_filters(
 
 st.title("Ecommerce Executive Dashboard")
 
-render_kpis(engine)
+render_kpis(engine, where_sql, params)
 
 st.divider()
 
