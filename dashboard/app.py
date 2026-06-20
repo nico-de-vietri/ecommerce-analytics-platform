@@ -8,7 +8,7 @@ from components.charts import (
     render_category,
     render_status,
 )
-from components.tables import render_top_customers
+from components.tables import render_customer_segmentation
 from components.insights import render_insights
 from filters import build_filters
 
@@ -67,7 +67,7 @@ with col1:
     render_status(engine, where_sql, params)
 
 with col2:
-    render_top_customers(engine)
+    render_customer_segmentation(engine)
 
 st.divider()
 

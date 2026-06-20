@@ -31,7 +31,19 @@ def render_trends(engine, where_sql, params):
 def render_geo(engine):
     df = pd.read_sql(open("sql/geography.sql").read(), engine)
     st.subheader("Revenue by State")
-    st.bar_chart(df.set_index("customer_state")["revenue"])
+    # st.bar_chart(df.set_index("customer_state")["revenue"])
+
+    chart = (
+        alt.Chart(df)
+        .mark_bar()
+        .encode(
+            y=alt.Y("customer_state:N", sort="-x", title="State"),
+            x=alt.X("revenue:Q", title="Revenue"),
+            tooltip=["customer_state", "revenue"],
+        )
+    )
+
+    st.altair_chart(chart, use_container_width=True)
 
 
 def render_category(engine):
@@ -54,5 +66,5 @@ def render_status(engine, where_sql, params):
     query = query.format(where_clause=where_sql)
     df = pd.read_sql(query, engine, params=params)
 
-    st.subheader("Order Status Distribution")
+    st.subheader("Non-Delivered Orders Breakdown")
     st.bar_chart(df.set_index("order_status"))
