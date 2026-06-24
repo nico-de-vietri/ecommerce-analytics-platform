@@ -1,13 +1,12 @@
 import streamlit as st
-import altair as alt
 import pandas as pd
-
-from utils.data_loader import load_dataframe
+import altair as alt
 
 
 def render_trends(engine, where_sql, params):
-
-    df = load_dataframe(engine, "revenue_trend.sql", where_sql, params)
+    query = open("sql/revenue_trend.sql").read()
+    query = query.format(where_clause=where_sql)
+    df = pd.read_sql(query, engine, params=params)
 
     df["month"] = pd.to_datetime(df["month"])
     df = df.sort_values("month")
@@ -16,24 +15,23 @@ def render_trends(engine, where_sql, params):
 
     with col1:
         st.subheader("Revenue Trend")
-
-        chart = alt.Chart(df).mark_line().encode(x="month:T", y="revenue:Q")
-
-        st.altair_chart(chart, use_container_width=True)
+        st.altair_chart(
+            alt.Chart(df).mark_line().encode(x="month:T", y="revenue:Q"),
+            use_container_width=True,
+        )
 
     with col2:
         st.subheader("AOV Trend")
-
-        chart = alt.Chart(df).mark_line().encode(x="month:T", y="aov:Q")
-
-        st.altair_chart(chart, use_container_width=True)
+        st.altair_chart(
+            alt.Chart(df).mark_line().encode(x="month:T", y="aov:Q"),
+            use_container_width=True,
+        )
 
 
 def render_geo(engine):
-
-    df = load_dataframe(engine, "geography.sql")
-
+    df = pd.read_sql(open("sql/geography.sql").read(), engine)
     st.subheader("Revenue by State")
+    # st.bar_chart(df.set_index("customer_state")["revenue"])
 
     chart = (
         alt.Chart(df)
@@ -49,17 +47,13 @@ def render_geo(engine):
 
 
 def render_category(engine):
-
-    df = load_dataframe(engine, "category.sql")
-
+    df = pd.read_sql(open("sql/category.sql").read(), engine)
     st.subheader("Revenue by Category")
-
     st.bar_chart(df.set_index("product_category_name")["revenue"])
 
 
 def render_top_categories(engine):
-
-    df = load_dataframe(engine, "top_products_categories.sql")
+    df = pd.read_sql(open("sql/top_products_categories.sql").read(), engine)
 
     st.subheader("Top 10 Product Categories by Revenue")
 
@@ -68,8 +62,9 @@ def render_top_categories(engine):
 
 def render_status(engine, where_sql, params):
 
-    df = load_dataframe(engine, "order_status.sql", where_sql, params)
+    query = open("sql/order_status.sql").read()
+    query = query.format(where_clause=where_sql)
+    df = pd.read_sql(query, engine, params=params)
 
     st.subheader("Non-Delivered Orders Breakdown")
-
     st.bar_chart(df.set_index("order_status"))
