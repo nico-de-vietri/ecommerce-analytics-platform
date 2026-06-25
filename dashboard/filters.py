@@ -3,11 +3,11 @@ def build_filters(states=None, categories=None):
     params = {}
 
     if states:
-        clauses.append("c.customer_state = ANY(%(states)s)")
+        clauses.append("fo.customer_state = ANY(%(states)s)")
         params["states"] = states
 
     if categories:
-        clauses.append("product_category_name = ANY(%(categories)s)")
+        clauses.append("fo.product_category_name = ANY(%(categories)s)")
         params["categories"] = categories
 
     where_sql = ""

@@ -12,6 +12,18 @@ WITH items AS (
     GROUP BY order_id
 ),
 
+categories AS (
+
+    SELECT
+        oi.order_id,
+        MIN(p.product_category_name) AS product_category_name
+    FROM staging.order_items oi
+    JOIN staging.products p
+        ON oi.product_id = p.product_id
+    GROUP BY oi.order_id
+
+),
+
 payments AS (
     SELECT
         order_id,
@@ -22,10 +34,11 @@ payments AS (
 
 SELECT
     o.order_id,
-
+    cat.product_category_name,
     -- customer identifiers
     o.customer_id,
     c.customer_unique_id,
+    c.customer_state,
 
     -- order attributes
     o.order_status,
@@ -48,4 +61,7 @@ LEFT JOIN items i
     ON o.order_id = i.order_id
 
 LEFT JOIN payments p
-    ON o.order_id = p.order_id;
+    ON o.order_id = p.order_id
+    
+LEFT JOIN categories cat
+    ON o.order_id = cat.order_id;

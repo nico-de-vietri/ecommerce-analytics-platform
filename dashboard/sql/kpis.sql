@@ -1,8 +1,9 @@
 SELECT
-    COUNT(DISTINCT c.customer_unique_id) AS customers,
+    COUNT(DISTINCT fo.customer_unique_id) AS customers,
     COUNT(DISTINCT fo.order_id) AS orders,
-    SUM(fo.payment_value) AS revenue,
-    ROUND(AVG(fo.payment_value), 2) AS aov,
+    coalesce(SUM(fo.payment_value), 0) AS revenue,
+    coalesce(ROUND(AVG(fo.payment_value), 2), 0) AS aov,
+    coalesce(
     ROUND(
         100.0 * SUM(
             CASE
@@ -12,9 +13,9 @@ SELECT
             END
         ) / COUNT(*),
         2
-    ) AS delivery_success_rate
+    ), 0) AS delivery_success_rate
 FROM analytics.fact_orders fo
-JOIN staging.customers c
-ON fo.customer_id = c.customer_id
+--JOIN staging.customers c
+--ON fo.customer_id = c.customer_id
 {where_clause}
 ;

@@ -10,6 +10,12 @@ def render_kpis(engine, where_sql, params):
 
     df = pd.read_sql(query, engine, params=params)
 
+    print(query)
+    print(params)
+    print(df)
+    print(df.dtypes)
+    print(df.columns.tolist())
+
     orders = df["orders"][0]
     customers = df["customers"][0]
     revenue = df["revenue"][0]
