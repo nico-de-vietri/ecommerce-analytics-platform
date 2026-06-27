@@ -1,0 +1,15 @@
+CSV files
+      │
+      ▼
+ Staging Tables
+      │
+      ▼
+ analytics.fact_orders
+      │
+      ├──────────────┐
+      ▼              ▼
+mart_geography   mart_product_category
+      │              │
+      └──────┬───────┘
+             ▼
+ Streamlit Dashboard
