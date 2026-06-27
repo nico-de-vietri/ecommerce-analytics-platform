@@ -11,6 +11,7 @@ from components.charts import (
 from components.tables import render_customer_segmentation
 from components.insights import render_insights
 from filters import build_filters
+from utils.data_loader import load_dataframe
 
 st.set_page_config("Executive Dashboard", layout="wide")
 
@@ -18,9 +19,11 @@ engine = get_engine()
 
 st.sidebar.header("Filters")
 
-states = pd.read_sql(open("sql/filters/states.sql").read(), engine)
+# states = pd.read_sql(open("sql/filters/states.sql").read(), engine)
+states = load_dataframe(engine, "states.sql", where_sql="", params=None)
 
-categories = pd.read_sql(open("sql/filters/categories.sql").read(), engine)
+# categories = pd.read_sql(open("sql/filters/categories.sql").read(), engine)
+categories = load_dataframe(engine, "categories.sql", where_sql="", params=None)
 
 selected_states = st.sidebar.multiselect("State", states["customer_state"].tolist())
 

@@ -1,12 +1,14 @@
 import pandas as pd
 import streamlit as st
+from utils.data_loader import load_dataframe
 
 
 def render_insights(engine):
 
     query = open("sql/executive_summary.sql").read()
 
-    summary = pd.read_sql(query, engine)
+    # summary = pd.read_sql(query, engine)
+    summary = load_dataframe(engine, "executive_summary.sql")
 
     row = summary.iloc[0]
 

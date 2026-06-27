@@ -1,14 +1,16 @@
 import streamlit as st
 import pandas as pd
+from utils.data_loader import load_dataframe
 
 
 def render_kpis(engine, where_sql, params):
-    with open("sql/kpis.sql") as f:
-        query = f.read()
+    # with open("sql/kpis.sql") as f:
+    #    query = f.read()
 
-    query = query.format(where_clause=where_sql)
+    # query = query.format(where_clause=where_sql)
 
-    df = pd.read_sql(query, engine, params=params)
+    # df = pd.read_sql(query, engine, params=params)
+    df = load_dataframe(engine, "kpis.sql", where_sql=where_sql, params=params)
 
     print(query)
     print(params)
